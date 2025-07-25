@@ -9,6 +9,16 @@ use Illuminate\Support\Facades\DB;
 
 class CancelOrderAction
 {
+    /**
+     * Применяет отмену заказа:
+     * - меняет статус заказа на "canceled"
+     * - возвращает товары на склад
+     * - записывает движение товаров
+     *
+     * @param Order $order Заказ для отмены
+     * @return Order Обновленный заказ с подгруженными отношениями
+     * @throws \Throwable Если произошла ошибка при выполнении транзакции
+     */
     public function apply(Order $order): Order
     {
         return DB::transaction(function () use ($order) {
@@ -22,6 +32,12 @@ class CancelOrderAction
         });
     }
 
+    /**
+     * Увеличивает остатки товаров на складе и регистрирует движение товаров
+     *
+     * @param Order $order Заказ, товары которого нужно вернуть на склад
+     * @return void
+     */
     protected function incrementStock($order): void
     {
         $products = $order->products()->get();

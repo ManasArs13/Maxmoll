@@ -10,6 +10,23 @@ use Illuminate\Support\Facades\DB;
 
 class CreateOrderAction
 {
+    /**
+     * Создает новый заказ и выполняет связанные операции:
+     * - Создает запись заказа
+     * - Добавляет товары в заказ
+     * - Уменьшает остатки на складе
+     * - Фиксирует движение товаров
+     *
+     * Все операции выполняются в транзакции для обеспечения целостности данных
+     *
+     * @param array $orderData Массив с данными для создания заказа:
+     *               - customer: Имя клиента
+     *               - warehouse_id: ID склада
+     *               - products: Массив товаров [['product_id' => X, 'count' => Y]]
+     * @return Order Созданный заказ с подгруженными отношениями
+     * @throws \Throwable Если произошла ошибка при выполнении транзакции
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException Если товар не найден
+     */
     public function apply(array $orderData): Order
     {
         return DB::transaction(function () use ($orderData) {
@@ -22,6 +39,12 @@ class CreateOrderAction
         });
     }
 
+    /**
+     * Создает основную запись заказа в базе данных
+     *
+     * @param array $orderData Данные для создания заказа
+     * @return Order Созданный заказ
+     */
     protected function createOrder(array $orderData): Order
     {
         return Order::create([
@@ -32,6 +55,14 @@ class CreateOrderAction
         ]);
     }
 
+    /**
+     * Добавляет товары в заказ через промежуточную таблицу
+     *
+     * @param Order $order Заказ, к которому добавляются товары
+     * @param array $items Массив товаров для добавления
+     * @return void
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException Если товар не найден
+     */
     protected function addItemsToOrder(Order $order, array $items): void
     {
         foreach ($items as $item) {
@@ -43,6 +74,12 @@ class CreateOrderAction
         }
     }
 
+    /**
+     * Уменьшает остатки товаров на складе и регистрирует движение товаров
+     *
+     * @param array $orderData Данные заказа, включая warehouse_id и список товаров
+     * @return void
+     */
     protected function decrementStock(array $orderData): void
     {
         foreach ($orderData['products'] as $item) {

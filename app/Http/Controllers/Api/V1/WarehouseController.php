@@ -6,23 +6,29 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\V1\Warehouse\WarehouseCollection;
 use App\Http\Resources\V1\Warehouse\WarehouseResource;
 use App\Models\Warehouse;
-use Illuminate\Http\Request;
+
 
 class WarehouseController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Получение списка всех складов
+     *
+     * Возвращает полный перечень складов в системе
+     * с базовой информацией о каждом складе
+     *
+     * @return WarehouseCollection Коллекция складов в формате JSON
      */
     public function index(): WarehouseCollection
     {
         $warehouses = Warehouse::all();
-
         return new WarehouseCollection($warehouses);
     }
 
-
     /**
-     * Display the specified resource.
+     * Получение детальной информации о конкретном складе
+     *
+     * @param Warehouse $warehouse Модель запрашиваемого склада (автоматическое разрешение)
+     * @return WarehouseResource Ресурс склада в формате JSON
      */
     public function show(Warehouse $warehouse): WarehouseResource
     {

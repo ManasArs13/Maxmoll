@@ -20,6 +20,16 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class OrderController extends Controller
 {
+    /**
+     * Внедрение зависимостей через конструктор
+     *
+     * @param OrderService $orderService Сервис работы с заказами
+     * @param CreateOrderAction $createOrder Действие создания заказа
+     * @param UpdateOrderAction $updateOrder Действие обновления заказа
+     * @param CompleteOrderAction $completeOrder Действие завершения заказа
+     * @param CancelOrderAction $cancelOrder Действие отмены заказа
+     * @param ReturnOrderAction $returnOrder Действие возврата заказа
+     */
     public function __construct(
         private OrderService $orderService,
         private CreateOrderAction $createOrder,
@@ -30,16 +40,24 @@ class OrderController extends Controller
     ) {}
 
     /**
-     * Display a listing of the resource.
+     * Получение списка заказов с фильтрацией
+     *
+     * @param OrderFilterRequest $request Запрос с параметрами фильтрации
+     * @return JsonResource Коллекция заказов в формате JSON
      */
     public function index(OrderFilterRequest $request): JsonResource
     {
+        // Получаем отфильтрованные заказы через сервис
         $orders = $this->orderService->getFilteredOrders($request);
+        
         return OrderResource::collection($orders);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Создание нового заказа
+     *
+     * @param StoreOrderRequest $request Валидированный запрос с данными заказа
+     * @return OrderResource Созданный заказ в формате JSON
      */
     public function store(StoreOrderRequest $request)
     {
@@ -48,7 +66,10 @@ class OrderController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Просмотр конкретного заказа
+     *
+     * @param Order $order Модель заказа
+     * @return OrderResource Заказ с подгруженными связями в формате JSON
      */
     public function show(Order $order): OrderResource
     {
@@ -63,36 +84,51 @@ class OrderController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Обновление данных заказа
+     *
+     * @param UpdateOrderRequest $request Валидированный запрос с новыми данными
+     * @param Order $order Модель заказа для обновления
+     * @return OrderResource Обновленный заказ в формате JSON
      */
-    public function update(UpdateOrderRequest $request, Order $order)
+    public function update(UpdateOrderRequest $request, Order $order): OrderResource
     {
         $updatedOrder = $this->updateOrder->apply($order, $request->validated());
         return new OrderResource($updatedOrder);
     }
 
     /**
-     * Complete the specified resource in storage.
+     * Завершение заказа (перевод в статус "completed")
+     *
+     * @param Order $order Модель заказа для завершения
+     * @return OrderResource Завершенный заказ в формате JSON
      */
-    public function complete(Order $order)
+    public function complete(Order $order): OrderResource
     {
         $updatedOrder = $this->completeOrder->apply($order);
         return new OrderResource($updatedOrder);
     }
 
     /**
-     * Cancel the specified resource in storage.
+     * Отмена заказа (перевод в статус "canceled")
+     *
+     * @param CancelOrderRequest $request Валидированный запрос
+     * @param Order $order Модель заказа для отмены
+     * @return OrderResource Отмененный заказ в формате JSON
      */
-    public function cancel(CancelOrderRequest $request, Order $order)
+    public function cancel(CancelOrderRequest $request, Order $order): OrderResource
     {
         $updatedOrder = $this->canceleOrder->apply($order);
         return new OrderResource($updatedOrder);
     }
 
     /**
-     * Return the specified resource in storage.
+     * Возврат заказа (перевод в статус "active")
+     *
+     * @param ReturnOrderRequest $request Валидированный запрос
+     * @param Order $order Модель заказа для возврата
+     * @return OrderResource Возвращенный заказ в формате JSON
      */
-    public function return(ReturnOrderRequest $request, Order $order)
+    public function return(ReturnOrderRequest $request, Order $order): OrderResource
     {
         $updatedOrder = $this->returnOrder->apply($order);
         return new OrderResource($updatedOrder);

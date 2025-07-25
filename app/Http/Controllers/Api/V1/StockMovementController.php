@@ -11,21 +11,34 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class StockMovementController extends Controller
 {
+    /**
+     * Конструктор с внедрением зависимостей
+     *
+     * @param StockMovementService $stockMovementService Сервис для работы с движениями товаров
+     */
     public function __construct(
         private StockMovementSevice $stockMovementSevice
     ) {}
 
     /**
-     * Display a listing of the resource.
+     * Получение отфильтрованного списка движений товаров
+     *
+     * @param StockMovementFilterRequest $request Запрос с параметрами фильтрации
+     * @return JsonResource Коллекция движений товаров в формате JSON
      */
     public function index(StockMovementFilterRequest $request): JsonResource
     {
+        // Получаем отфильтрованные движения товаров через сервис
         $stockMovement = $this->stockMovementSevice->getFilteredStockMovements($request);
+        
         return StockMovementResource::collection($stockMovement);
     }
 
     /**
-     * Display the specified resource.
+     * Получение детальной информации о конкретном движении товара
+     *
+     * @param StockMovement $stockMovement Модель движения товара
+     * @return StockMovementResource Ресурс движения товара в формате JSON
      */
     public function show(StockMovement $stockMovement): StockMovementResource
     {

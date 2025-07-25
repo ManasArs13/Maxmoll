@@ -9,6 +9,18 @@ use Illuminate\Support\Facades\DB;
 
 class ReturnOrderAction
 {
+    /**
+     * Обрабатывает возврат заказа:
+     * - Возвращает заказ в статус "active"
+     * - Уменьшает остатки товаров на складе (компенсируя предыдущее увеличение)
+     * - Фиксирует движение товаров
+     * 
+     * Все операции выполняются в транзакции для атомарности
+     *
+     * @param Order $order Заказ для возврата
+     * @return Order Обновленный заказ с подгруженными связями
+     * @throws \Throwable При ошибке выполнения транзакции
+     */
     public function apply(Order $order): Order
     {
         return DB::transaction(function () use ($order) {
@@ -22,6 +34,14 @@ class ReturnOrderAction
         });
     }
 
+    /**
+     * Уменьшает остатки товаров на складе и регистрирует движение товаров
+     * 
+     * Используется при возврате заказа для компенсации ранее увеличенных остатков
+     *
+     * @param Order $order Заказ с товарами для возврата
+     * @return void
+     */
     protected function decrementStock($order): void
     {
         $products = $order->products()->get();

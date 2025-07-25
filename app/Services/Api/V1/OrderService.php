@@ -7,6 +7,13 @@ use Illuminate\Http\Request;
 
 class OrderService
 {
+    /**
+     * Получение отфильтрованного списка заказов с пагинацией
+     *
+     * @param Request $request HTTP-запрос с параметрами фильтрации
+     * @param int|null $perPage Количество элементов на странице (null для значения по умолчанию)
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     */
     public function getFilteredOrders(Request $request, ?int $perPage = null)
     {
         return (new OrderQueryBuilder())

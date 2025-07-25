@@ -10,7 +10,13 @@ use App\Http\Resources\V1\Product\ProductResource;
 class ProductController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Получение списка всех товаров с информацией о наличии на складах
+     *
+     * Возвращает коллекцию товаров с подгруженными данными:
+     * - Информация о наличии на складах (stocks)
+     * - Данные складов, где есть товар (warehouse)
+     *
+     * @return ProductCollection Коллекция товаров в формате JSON
      */
     public function index(): ProductCollection
     {
@@ -18,13 +24,14 @@ class ProductController extends Controller
         return new ProductCollection($products);
     }
 
-
     /**
-     * Display the specified resource.
+     * Получение детальной информации о конкретном товаре
+     *
+     * @param Product $product Модель запрашиваемого товара
+     * @return ProductResource Ресурс товара в формате JSON
      */
     public function show(Product $product): ProductResource
     {
         return new ProductResource($product);
     }
-
 }
