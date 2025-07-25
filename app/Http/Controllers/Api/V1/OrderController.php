@@ -15,15 +15,16 @@ use App\Http\Requests\Api\V1\OrderFilterRequest;
 use App\Http\Requests\Api\V1\ReturnOrderRequest;
 use App\Http\Requests\Api\V1\UpdateOrderRequest;
 use App\Http\Resources\V1\Order\OrderResource;
-use App\Services\Api\V1\OrderService;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Builders\Api\V1\OrderQueryBuilder;
+use App\Services\Api\V1\FilterService;
 
 class OrderController extends Controller
 {
     /**
      * Внедрение зависимостей через конструктор
      *
-     * @param OrderService $orderService Сервис работы с заказами
+     * @param FilterService $filterService Сервис фильтрации
      * @param CreateOrderAction $createOrder Действие создания заказа
      * @param UpdateOrderAction $updateOrder Действие обновления заказа
      * @param CompleteOrderAction $completeOrder Действие завершения заказа
@@ -31,7 +32,7 @@ class OrderController extends Controller
      * @param ReturnOrderAction $returnOrder Действие возврата заказа
      */
     public function __construct(
-        private OrderService $orderService,
+        private FilterService $filterService,
         private CreateOrderAction $createOrder,
         private UpdateOrderAction $updateOrder,
         private CompleteOrderAction $completeOrder,
@@ -48,7 +49,7 @@ class OrderController extends Controller
     public function index(OrderFilterRequest $request): JsonResource
     {
         // Получаем отфильтрованные заказы через сервис
-        $orders = $this->orderService->getFilteredOrders($request);
+        $orders = $this->filterService->getFilter(new OrderQueryBuilder, $request);
         
         return OrderResource::collection($orders);
     }

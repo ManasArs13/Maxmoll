@@ -2,18 +2,20 @@
 
 namespace App\Builders\Api\V1;
 
+use App\Builders\BaseQueryBuilder;
 use App\Models\Order;
 use Illuminate\Http\Request;
 
-class OrderQueryBuilder
+class OrderQueryBuilder extends BaseQueryBuilder
 {
-    /** @var Builder $query Построитель запроса */
-    private $query;
-
     public function __construct()
     {
-        $this->query = Order::with(['warehouse', 'products'])
-            ->orderBy('created_at', 'desc');
+        parent::__construct(
+            model: Order::class,
+            with: ['warehouse', 'products'],
+            orderBy: 'created_at',
+            orderDirection: 'desc'
+        );
     }
 
     /**
@@ -89,26 +91,5 @@ class OrderQueryBuilder
             $this->query->where('customer', 'like', '%' . $request->customer . '%');
         }
         return $this;
-    }
-
-    /**
-     * Выполняет запрос с пагинацией
-     *
-     * @param int|null $perPage
-     * @return LengthAwarePaginator
-     */
-    public function paginate(?int $perPage = null)
-    {
-        return $this->query->paginate($perPage);
-    }
-
-    /**
-     * Возвращает текущий построитель запроса
-     *
-     * @return Builder
-     */
-    public function getQuery()
-    {
-        return $this->query;
     }
 }

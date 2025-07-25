@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Builders\Api\V1\StockMovementQueryBuilder;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\StockMovementFilterRequest;
 use App\Http\Resources\V1\StockMovement\StockMovementResource;
 use App\Models\StockMovement;
-use App\Services\Api\V1\StockMovementSevice;
+use App\Services\Api\V1\FilterService;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class StockMovementController extends Controller
@@ -14,10 +15,10 @@ class StockMovementController extends Controller
     /**
      * Конструктор с внедрением зависимостей
      *
-     * @param StockMovementService $stockMovementService Сервис для работы с движениями товаров
+     * @param FilterService $filterService Сервис фильтрации
      */
     public function __construct(
-        private StockMovementSevice $stockMovementSevice
+        private FilterService $filterService,
     ) {}
 
     /**
@@ -29,7 +30,7 @@ class StockMovementController extends Controller
     public function index(StockMovementFilterRequest $request): JsonResource
     {
         // Получаем отфильтрованные движения товаров через сервис
-        $stockMovement = $this->stockMovementSevice->getFilteredStockMovements($request);
+        $stockMovement = $this->filterService->getFilter(new StockMovementQueryBuilder, $request);
         
         return StockMovementResource::collection($stockMovement);
     }

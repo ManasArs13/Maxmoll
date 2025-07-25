@@ -4,16 +4,18 @@ namespace App\Builders\Api\V1;
 
 use App\Models\StockMovement;
 use Illuminate\Http\Request;
+use App\Builders\BaseQueryBuilder;
 
-class StockMovementQueryBuilder
+class StockMovementQueryBuilder extends BaseQueryBuilder
 {
-    /** @var Builder $query Построитель запроса */
-    private $query;
-
     public function __construct()
     {
-        $this->query = StockMovement::with(['warehouse', 'product'])
-            ->orderBy('created_at', 'desc');
+        parent::__construct(
+            model: StockMovement::class,
+            with: ['warehouse', 'product'],
+            orderBy: 'created_at',
+            orderDirection: 'desc'
+        );
     }
 
     /**
@@ -74,26 +76,5 @@ class StockMovementQueryBuilder
             $this->query->whereDate('created_at', '<=', $request->date_to);
         }
         return $this;
-    }
-
-    /**
-     * Выполняет запрос с пагинацией
-     *
-     * @param int|null $perPage
-     * @return LengthAwarePaginator
-     */
-    public function paginate(?int $perPage = null)
-    {
-        return $this->query->paginate($perPage);
-    }
-
-    /**
-     * Возвращает текущий построитель запроса
-     *
-     * @return Builder
-     */
-    public function getQuery()
-    {
-        return $this->query;
     }
 }

@@ -2,10 +2,10 @@
 
 namespace App\Services\Api\V1;
 
-use App\Builders\Api\V1\OrderQueryBuilder;
+use App\Contracts\Api\QueryBuilderInterface;
 use Illuminate\Http\Request;
 
-class OrderService
+class FilterService
 {
     /**
      * Получение отфильтрованного списка заказов с пагинацией
@@ -14,9 +14,9 @@ class OrderService
      * @param int|null $perPage Количество элементов на странице (null для значения по умолчанию)
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
-    public function getFilteredOrders(Request $request, ?int $perPage = null)
+    public function getFilter(QueryBuilderInterface $queryBuilderInterface, Request $request, ?int $perPage = null)
     {
-        return (new OrderQueryBuilder())
+        return ($queryBuilderInterface)
             ->applyFilters($request)
             ->paginate($perPage ?? $request->get('per_page', 15));
     }
