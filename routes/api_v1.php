@@ -6,25 +6,50 @@ use App\Http\Controllers\Api\V1\StockMovementController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\WarehouseController;
 
+/*
+|--------------------------------------------------------------------------
+| API Routes Version 1
+|--------------------------------------------------------------------------
+|
+| Маршруты для API версии 1. Все маршруты имеют префикс /v1
+| и префикс именования api.v1.
+|
+*/
+
 Route::prefix('v1')->name('api.v1.')->group(function () {
+
+    // Маршруты для работы со складами (только чтение)
     Route::apiResource('warehouses', WarehouseController::class)
         ->only(['index', 'show']);
 
+    // Маршруты для работы с товарами (только чтение)
     Route::apiResource('products', ProductController::class)
         ->only(['index', 'show']);
 
+    // Маршруты для работы с движениями товаров (только чтение)
     Route::apiResource('stock-movements', StockMovementController::class)
         ->only(['index', 'show']);
 
+    // Маршруты для работы с заказами (полный CRUD кроме удаления)
     Route::apiResource('orders', OrderController::class)
         ->only(['index', 'show', 'store', 'update']);
 
-    Route::get('/orders/{order}/complete', [OrderController::class, 'complete'])
-        ->name('orders.complete');
+    // Дополнительные маршруты для управления статусами заказов
+    Route::prefix('orders/{order}')->group(function () {
 
-    Route::get('/orders/{order}/cancel', [OrderController::class, 'cancel'])
-        ->name('orders.cancel');
+        // Завершение заказа
+        Route::patch('complete', [OrderController::class, 'complete'])
+            ->name('orders.complete')
+            ->middleware('can:complete,order');  // Проверка прав
 
-    Route::get('/orders/{order}/return', [OrderController::class, 'return'])
-        ->name('orders.return');
+        // Отмена заказа
+        Route::patch('cancel', [OrderController::class, 'cancel'])
+            ->name('orders.cancel')
+            ->middleware('can:cancel,order');
+
+        // Возврат заказа
+        Route::patch('return', [OrderController::class, 'return'])
+            ->name('orders.return')
+            ->middleware('can:return,order');
+    });
 });

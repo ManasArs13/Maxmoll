@@ -74,6 +74,11 @@ class DatabaseSeeder extends Seeder
         $this->printStatistics();
     }
 
+    /**
+     * Установка случайного статуса для заказа
+     *
+     * @param Order $order
+     */
     protected function setOrderStatus($order)
     {
         $chance = rand(1, 100);
@@ -88,6 +93,9 @@ class DatabaseSeeder extends Seeder
         }
     }
 
+    /**
+     * Вывод статистики по заполненным данным
+     */
     protected function printStatistics()
     {
         $this->command->info('Database seeded successfully!');
