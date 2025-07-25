@@ -27,7 +27,7 @@ class DatabaseSeeder extends Seeder
     protected const COMPLETED_ORDER_CHANCE = 30;
     protected const CANCELED_ORDER_CHANCE = 10;
 
-    
+
     /**
      * Seed the application's database.
      */
@@ -54,7 +54,7 @@ class DatabaseSeeder extends Seeder
                 self::MAX_ORDER_ITEMS
             ));
 
-            $order->items()->attach(
+            $order->products()->attach(
                 $productsToAttach->pluck('id')->toArray(),
                 ['count' => rand(
                     self::MIN_PRODUCT_QUANTITY,

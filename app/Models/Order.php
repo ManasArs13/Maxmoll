@@ -16,12 +16,17 @@ class Order extends Model
 
     protected $fillable = ['customer', 'created_at', 'completed_at', 'warehouse_id', 'status'];
 
+    protected $casts = [
+        'created_at' => 'datetime',
+        'completed_at' => 'datetime'
+    ];
+
     public function warehouse(): BelongsTo
     {
         return $this->belongsTo(Warehouse::class);
     }
 
-    public function items(): BelongsToMany
+    public function products(): BelongsToMany
     {
         return $this->belongsToMany(Product::class, 'order_items')
             ->withPivot('count');
@@ -33,7 +38,7 @@ class Order extends Model
             if ($order->isDirty('status') && $order->status === 'completed') {
                 $order->completed_at = $order->completed_at ?? now();
             }
-            
+
             if ($order->isDirty('status') && $order->getOriginal('status') === 'completed') {
                 $order->completed_at = null;
             }

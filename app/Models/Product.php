@@ -15,9 +15,8 @@ class Product extends Model
 
     protected $fillable = ['name', 'price'];
 
-    public function stocks(): BelongsToMany
+    public function stocks()
     {
-        return $this->belongsToMany(Warehouse::class, 'stocks')
-            ->withPivot('stock');
+        return $this->hasMany(Stock::class);
     }
 }
