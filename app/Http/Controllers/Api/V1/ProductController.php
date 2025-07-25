@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V1\Product\ProductCollection;
 use App\Http\Resources\V1\Product\ProductResource;
+use Illuminate\Http\JsonResponse;
 
 class ProductController extends Controller
 {
@@ -30,7 +31,7 @@ class ProductController extends Controller
      * @param Product $product Модель запрашиваемого товара
      * @return ProductResource Ресурс товара в формате JSON
      */
-    public function show(Product $product): ProductResource
+    public function show(Product $product): JsonResponse|ProductResource
     {
         return new ProductResource($product);
     }

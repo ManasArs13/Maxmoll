@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Actions\Api\V1\Orders\CancelOrderAction;
-use App\Actions\Api\V1\Orders\CompleteOrderAction;
-use App\Actions\Api\V1\Orders\CreateOrderAction;
-use App\Actions\Api\V1\Orders\ReturnOrderAction;
-use App\Actions\Api\V1\Orders\UpdateOrderAction;
+use App\Actions\Api\V1\CancelOrderAction;
+use App\Actions\Api\V1\CompleteOrderAction;
+use App\Actions\Api\V1\CreateOrderAction;
+use App\Actions\Api\V1\ReturnOrderAction;
+use App\Actions\Api\V1\UpdateOrderAction;
 use App\Models\Order;
 use App\Http\Requests\Api\V1\StoreOrderRequest;
 use App\Http\Controllers\Controller;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Api\V1\Orders;
+namespace App\Actions\Api\V1;
 
 use App\Models\Order;
 
