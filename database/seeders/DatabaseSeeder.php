@@ -8,7 +8,7 @@ use App\Models\Product;
 use App\Models\Warehouse;
 use App\Models\Order;
 use App\Models\Stock;
-
+use App\Models\StockMovement;
 
 class DatabaseSeeder extends Seeder
 {
@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
     protected const MAX_ORDER_ITEMS = 5;
     protected const MIN_PRODUCT_QUANTITY = 1;
     protected const MAX_PRODUCT_QUANTITY = 5;
+    protected const STOCK_MOVEMENT_COUNT = 30;
 
     // Вероятности статусов заказов (%)
     protected const COMPLETED_ORDER_CHANCE = 30;
@@ -65,6 +66,11 @@ class DatabaseSeeder extends Seeder
             $this->setOrderStatus($order);
         });
 
+        StockMovement::factory()->count(self::STOCK_MOVEMENT_COUNT)->create([
+            'warehouse_id' => fn() => $warehouses->random()->id,
+            'product_id' => fn() => $products->random()->id,
+        ]);
+
         $this->printStatistics();
     }
 
@@ -92,6 +98,7 @@ class DatabaseSeeder extends Seeder
                 ['Склады', Warehouse::count(), self::WAREHOUSES_COUNT],
                 ['Остатки', Stock::count(), self::PRODUCTS_COUNT * self::WAREHOUSES_COUNT],
                 ['Заказы', Order::count(), self::ORDERS_COUNT],
+                ['Движение товаров', StockMovement::count(), self::STOCK_MOVEMENT_COUNT]
             ]
         );
     }

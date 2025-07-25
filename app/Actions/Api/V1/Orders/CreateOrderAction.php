@@ -5,6 +5,7 @@ namespace App\Actions\Api\V1\Orders;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Stock;
+use App\Models\StockMovement;
 use Illuminate\Support\Facades\DB;
 
 class CreateOrderAction
@@ -34,7 +35,7 @@ class CreateOrderAction
     protected function addItemsToOrder(Order $order, array $items): void
     {
         foreach ($items as $item) {
-            
+
             $order->products()->attach(
                 Product::findOrFail($item['product_id']),
                 ['count' => $item['count']]
@@ -49,6 +50,18 @@ class CreateOrderAction
                 'warehouse_id' => $orderData['warehouse_id'],
                 'product_id' => $item['product_id']
             ])->decrement('stock', $item['count']);
+
+            $stock = Stock::where([
+                'warehouse_id' => $orderData['warehouse_id'],
+                'product_id' => $item['product_id']
+            ])->First();
+
+            StockMovement::create([
+                'product_id' => $stock->product_id,
+                'warehouse_id' => $stock->warehouse_id,
+                'quantity' => -$item['count'],
+                'balance_after' => $stock->stock,
+            ]);
         }
     }
 }

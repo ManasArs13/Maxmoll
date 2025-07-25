@@ -2,40 +2,39 @@
 
 namespace App\Builders\Api\V1;
 
-use App\Models\Order;
+use App\Models\StockMovement;
 use Illuminate\Http\Request;
 
-class OrderQueryBuilder
+class StockMovementQueryBuilder
 {
     private $query;
 
     public function __construct()
     {
-        $this->query = Order::with(['warehouse', 'products'])
+        $this->query = StockMovement::with(['warehouse', 'product'])
             ->orderBy('created_at', 'desc');
     }
 
     public function applyFilters(Request $request): self
     {
-        $this->filterByStatus($request)
-            ->filterByWarehouse($request)
-            ->filterByDateRange($request)
-            ->filterByCustomer($request);
-        return $this;
-    }
-
-    public function filterByStatus(Request $request): self
-    {
-        if ($request->has('status')) {
-            $this->query->where('status', $request->status);
-        }
+        $this->filterByWarehouse($request)
+            ->filterByProduct($request)
+            ->filterByDateRange($request);
         return $this;
     }
 
     public function filterByWarehouse(Request $request): self
     {
-        if ($request->has('warehouse_id')) {
-            $this->query->where('warehouse_id', $request->warehouse_id);
+        if ($request->has('warehouse')) {
+            $this->query->where('warehouse_id', $request->warehouse);
+        }
+        return $this;
+    }
+
+    public function filterByProduct(Request $request): self
+    {
+        if ($request->has('product')) {
+            $this->query->where('product_id', $request->product);
         }
         return $this;
     }
@@ -48,14 +47,6 @@ class OrderQueryBuilder
 
         if ($request->has('date_to')) {
             $this->query->whereDate('created_at', '<=', $request->date_to);
-        }
-        return $this;
-    }
-
-    public function filterByCustomer(Request $request): self
-    {
-        if ($request->has('customer')) {
-            $this->query->where('customer', 'like', '%' . $request->customer . '%');
         }
         return $this;
     }
