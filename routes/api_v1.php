@@ -38,18 +38,15 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
     Route::prefix('orders/{order}')->group(function () {
 
         // Завершение заказа
-        Route::patch('complete', [OrderController::class, 'complete'])
-            ->name('orders.complete')
-            ->middleware('can:complete,order');  // Проверка прав
+        Route::get('complete', [OrderController::class, 'complete'])
+            ->name('orders.complete');
 
         // Отмена заказа
-        Route::patch('cancel', [OrderController::class, 'cancel'])
-            ->name('orders.cancel')
-            ->middleware('can:cancel,order');
+        Route::get('cancel', [OrderController::class, 'cancel'])
+            ->name('orders.cancel');
 
         // Возврат заказа
-        Route::patch('return', [OrderController::class, 'return'])
-            ->name('orders.return')
-            ->middleware('can:return,order');
+        Route::get('return', [OrderController::class, 'return'])
+            ->name('orders.return');
     });
 });
