@@ -2,6 +2,7 @@
 
 namespace App\Actions\Api\V1;
 
+use App\Events\DecrementStockEvent;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Stock;
@@ -49,46 +50,14 @@ class UpdateOrderAction
 
                 // Добавляем новые и убираем со склада
                 $this->addItemsToOrder($order, $orderData['products']);
-                $this->decrementStock($orderData);
+
+                // Событие для уменьшения остатки на складе
+                event(new DecrementStockEvent($order));
             }
 
 
             return $order->load(['warehouse', 'products']);
         });
-    }
-
-    /**
-     * Добавляет товары в заказ через промежуточную таблицу
-     *
-     * @param Order $order Заказ для обновления
-     * @param array $items Массив товаров для добавления
-     * @return void
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException Если товар не найден
-     */
-    protected function addItemsToOrder(Order $order, array $items): void
-    {
-        foreach ($items as $item) {
-            $order->products()->attach(
-                Product::findOrFail($item['product_id']),
-                ['count' => $item['count']]
-            );
-        }
-    }
-
-    /**
-     * Уменьшает остатки товаров на складе (при добавлении в заказ)
-     *
-     * @param array $orderData Данные заказа, включая warehouse_id и список товаров
-     * @return void
-     */
-    protected function decrementStock(array $orderData): void
-    {
-        foreach ($orderData['products'] as $item) {
-            Stock::where([
-                'warehouse_id' => $orderData['warehouse_id'],
-                'product_id' => $item['product_id']
-            ])->decrement('stock', $item['count']);
-        }
     }
 
     /**
@@ -109,5 +78,23 @@ class UpdateOrderAction
         }
 
         $order->products()->detach();
+    }
+
+    /**
+     * Добавляет товары в заказ через промежуточную таблицу
+     *
+     * @param Order $order Заказ для обновления
+     * @param array $items Массив товаров для добавления
+     * @return void
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException Если товар не найден
+     */
+    protected function addItemsToOrder(Order $order, array $items): void
+    {
+        foreach ($items as $item) {
+            $order->products()->attach(
+                Product::findOrFail($item['product_id']),
+                ['count' => $item['count']]
+            );
+        }
     }
 }
