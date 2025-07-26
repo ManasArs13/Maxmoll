@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Api\V1;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\ValidationException;
 
 class StockMovementFilterRequest extends FormRequest
 {
@@ -30,5 +31,14 @@ class StockMovementFilterRequest extends FormRequest
             'customer' => 'sometimes|string|max:255',
             'per_page' => 'sometimes|integer|min:1|max:100',
         ];
+    }
+
+    protected function failedValidation($validator)
+    {
+        throw new ValidationException($validator, response()->json([
+            'code' => 422,
+            'message' => $validator->getMessageBag(),
+            'errors' => $validator->errors()
+        ], 422));
     }
 }

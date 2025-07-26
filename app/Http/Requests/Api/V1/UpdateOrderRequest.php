@@ -4,6 +4,7 @@ namespace App\Http\Requests\Api\V1;
 
 use App\Models\Stock;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\ValidationException;
 
 class UpdateOrderRequest extends FormRequest
 {
@@ -20,7 +21,7 @@ class UpdateOrderRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-        public function rules(): array
+    public function rules(): array
     {
         return [
             'customer' => 'string|max:255',
@@ -56,5 +57,14 @@ class UpdateOrderRequest extends FormRequest
                 }
             }
         });
+    }
+
+    protected function failedValidation($validator)
+    {
+        throw new ValidationException($validator, response()->json([
+            'code' => 422,
+            'message' => $validator->getMessageBag(),
+            'errors' => $validator->errors()
+        ], 422));
     }
 }

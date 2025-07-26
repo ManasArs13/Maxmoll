@@ -51,7 +51,8 @@ class ReturnOrderRequest extends FormRequest
     protected function failedValidation($validator)
     {
         throw new ValidationException($validator, response()->json([
-            'message' => 'Invalid order status',
+            'code' => 422,
+            'message' => $validator->getMessageBag(),
             'errors' => $validator->errors()
         ], 422));
     }
