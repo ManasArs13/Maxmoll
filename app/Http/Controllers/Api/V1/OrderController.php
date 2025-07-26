@@ -17,6 +17,7 @@ use App\Http\Requests\Api\V1\UpdateOrderRequest;
 use App\Http\Resources\V1\Order\OrderResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Builders\Api\V1\OrderQueryBuilder;
+use App\Http\Requests\Api\V1\CompleteOrderRequest;
 use App\Services\Api\V1\FilterService;
 
 class OrderController extends Controller
@@ -100,10 +101,11 @@ class OrderController extends Controller
     /**
      * Завершение заказа (перевод в статус "completed")
      *
+     * @param CompleteOrderRequest $request Валидированный запрос
      * @param Order $order Модель заказа для завершения
      * @return OrderResource Завершенный заказ в формате JSON
      */
-    public function complete(Order $order): OrderResource
+    public function complete(CompleteOrderRequest $request, Order $order): OrderResource
     {
         $updatedOrder = $this->completeOrder->apply($order);
         return new OrderResource($updatedOrder);
