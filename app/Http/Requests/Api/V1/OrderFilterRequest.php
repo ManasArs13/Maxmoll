@@ -29,7 +29,7 @@ class OrderFilterRequest extends FormRequest
                 'string',
                 Rule::in(['active', 'completed', 'canceled']),
             ],
-            'warehouse_id' => 'sometimes|integer|exists:warehouses,id',
+            'warehouse' => 'sometimes|integer|exists:warehouses,id',
             'date_from' => 'sometimes|date|date_format:Y-m-d',
             'date_to' => 'sometimes|date|date_format:Y-m-d',
             'customer' => 'sometimes|string|max:255',
