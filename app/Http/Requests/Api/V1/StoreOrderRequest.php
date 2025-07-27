@@ -43,17 +43,19 @@ class StoreOrderRequest extends FormRequest
     public function withValidator($validator)
     {
         $validator->after(function ($validator) {
-            foreach ($this->products as $item) {
-                $stock = Stock::where([
-                    'warehouse_id' => $this->warehouse_id,
-                    'product_id' => $item['product_id']
-                ])->first();
+            if ($this->products !== null) {
+                foreach ($this->products as $item) {
+                    $stock = Stock::where([
+                        'warehouse_id' => $this->warehouse_id,
+                        'product_id' => $item['product_id']
+                    ])->first();
 
-                if (!$stock || $stock->stock < $item['count']) {
-                    $validator->errors()->add(
-                        'items',
-                        "Недостаточно товара ID {$item['product_id']} на складе"
-                    );
+                    if (!$stock || $stock->stock < $item['count']) {
+                        $validator->errors()->add(
+                            'items',
+                            "Недостаточно товара ID {$item['product_id']} на складе"
+                        );
+                    }
                 }
             }
         });
