@@ -55,7 +55,7 @@ class OrderQueryBuilder extends BaseQueryBuilder
      */
     public function filterByWarehouse(Request $request): self
     {
-        if ($request->has('warehouse_id')) {
+        if ($request->has('warehouse')) {
             $this->query->where('warehouse_id', $request->warehouse_id);
         }
         return $this;
