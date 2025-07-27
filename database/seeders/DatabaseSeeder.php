@@ -13,20 +13,20 @@ use App\Models\StockMovement;
 class DatabaseSeeder extends Seeder
 {
     // Конфигурация количества записей
-    protected const PRODUCTS_COUNT = 10;
-    protected const WAREHOUSES_COUNT = 3;
-    protected const ORDERS_COUNT = 20;
-    protected const MIN_STOCK = 10;
-    protected const MAX_STOCK = 100;
-    protected const MIN_ORDER_ITEMS = 1;
-    protected const MAX_ORDER_ITEMS = 5;
-    protected const MIN_PRODUCT_QUANTITY = 1;
-    protected const MAX_PRODUCT_QUANTITY = 5;
-    protected const STOCK_MOVEMENT_COUNT = 30;
+    public const PRODUCTS_COUNT = 10;
+    public const WAREHOUSES_COUNT = 3;
+    public const ORDERS_COUNT = 20;
+    public const MIN_STOCK = 10;
+    public const MAX_STOCK = 100;
+    public const MIN_ORDER_ITEMS = 1;
+    public const MAX_ORDER_ITEMS = 5;
+    public const MIN_PRODUCT_QUANTITY = 1;
+    public const MAX_PRODUCT_QUANTITY = 5;
+    public const STOCK_MOVEMENT_COUNT = 30;
 
     // Вероятности статусов заказов (%)
-    protected const COMPLETED_ORDER_CHANCE = 30;
-    protected const CANCELED_ORDER_CHANCE = 10;
+    public const COMPLETED_ORDER_CHANCE = 30;
+    public const CANCELED_ORDER_CHANCE = 10;
 
 
     /**
